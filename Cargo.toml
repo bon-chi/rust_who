@@ -1,0 +1,7 @@
+[package]
+name = "rust_who"
+version = "0.1.0"
+authors = ["Koji Ota"]
+
+[dependencies]
+libc = "~0.2"
