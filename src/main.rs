@@ -77,17 +77,6 @@ extern "C" {
     pub fn read(fd: c_int, buf: *mut c_void, count: size_t) -> usize;
 }
 
-fn show_utmp_info() {
-    let utmp_file = File::open(UTMP_FILE_PATH).unwrap();
-    let mut utmp_struct: utmp = Default::default();
-    let buffer: *mut c_void = &mut utmp_struct as *mut _ as *mut c_void;
-    unsafe {
-        while read(utmp_file.as_raw_fd(), buffer, mem::size_of::<utmp>()) != 0 {
-            show_info(&utmp_struct);
-        }
-    }
-}
-
 fn show_info(utmp_struct: &utmp) {
     print!("{} ",
            String::from_utf8((utmp_struct.ut_user.iter().map(|&x| x as u8).collect())).unwrap());
@@ -101,5 +90,12 @@ fn show_info(utmp_struct: &utmp) {
 
 
 fn main() {
-    show_utmp_info();
+    let utmp_file = File::open(UTMP_FILE_PATH).unwrap();
+    let mut utmp_struct: utmp = Default::default();
+    let buffer: *mut c_void = &mut utmp_struct as *mut _ as *mut c_void;
+    unsafe {
+        while read(utmp_file.as_raw_fd(), buffer, mem::size_of::<utmp>()) != 0 {
+            show_info(&utmp_struct);
+        }
+    }
 }
